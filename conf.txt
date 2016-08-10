@@ -1,0 +1,1 @@
+siteDir=C:\sync\LERC\Isernia\GeoRes_2015\a236
