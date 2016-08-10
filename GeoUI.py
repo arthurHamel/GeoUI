@@ -18,6 +18,7 @@ class ImportDialog(QtGui.QDialog, DIAG_Import):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+	self.setWindowTitle('Import data')
  
 DIAG_Assemble, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'assemble.ui'))
 
@@ -56,17 +57,25 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 		self.exportGeoTiff_main.setEnabled(False)
 		self.loadParam()
 		
+	def addInfo(self,l):
+		self.infotxt+=l
+		self.infoTxt_main.setText(self.infotxt)
+		app.processEvents()
+		
+	def clearInfo(self):
+		self.infotxt=""
+		self.infoTxt_main.setText(self.infotxt)
+		app.processEvents()
 		
 	def select_output(self):
 
-		foldername = QFileDialog.getExistingDirectory(self, "Select output directory ","")
+		foldername = QFileDialog.getExistingDirectory(self, "Select output directory ",self.foldername)
 		self.foldername=foldername
-		
 		#Here check that the directory is valid
 		self.pathRaw=foldername +"\\raw\\"
 		self.pathOutput=foldername +"\\output\\"
 		self.pathTiles=foldername +"\\tiles\\"
-		infotxt=""
+		self.infotxt=""
 		if (os.path.isdir(self.pathRaw)==0):
 			infotxt+="Raw folder not found\n"
 		if (os.path.isdir(self.pathOutput)==0):
@@ -109,8 +118,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 		self.init=self.scanLastGridId()
 
 		self.dlgImport.firstGrid.setValue(self.init)
-		self.dlgImport.buttonBox.accepted.connect(self.downloadRM85)
-		self.dlgImport.buttonBox.rejected.connect(self.dlgImport.close)
+		self.dlgImport.go.clicked.connect(self.downloadRM85)
 		
 		self.dlgImport.show()
 		
@@ -153,7 +161,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 		plt.hist(all, bins=100)
 		plt.show()
 		
-		report=("min=%s\nmax=%s\nStd=%s\nMean=%s" %(self.min,self.max,self.std,self.mean))
+		report=("Statistics\nmin=%.3f\nmax=%.3f\nStd=%.3f\nMean=%.3f" %(self.min,self.max,self.std,self.mean))
 		
 		self.infoTxt_main.setText(report)
 	
@@ -305,19 +313,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 				os.remove(str(self.pathTiles+file))
 		
 		
-	def connectLogger(self):
-		import serial
-		
-		try:
-			ser = serial.Serial(str(self.dlgImport.com.currentText()), int(self.dlgImport.baud.currentText()), timeout=1) #Tried with and without the last 3 parameters, and also at 1Mbps, same happens.
-			ser.flushInput()
-			ser.flushOutput()
-		except:
-			self.dlgImport.status.setText("Error: check connection.")
-			return (0,"niente")
-		else:
-			self.dlgImport.status.setText("Ready. Press <<Dump>> on device.")
-			return (1,ser)
+
 			
 	def downloadRM85(self):
 		import serial
@@ -325,9 +321,20 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 		rows=self.dlgImport.YSize.value()
 		cols=self.dlgImport.XSize.value()
 		
-		connected,ser=self.connectLogger()
-		print (connected, ser)
 
+		try:
+			ser = serial.Serial(str(self.dlgImport.com.currentText()), int(self.dlgImport.baud.currentText()), timeout=1) #Tried with and without the last 3 parameters, and also at 1Mbps, same happens.
+			ser.flushInput()
+			ser.flushOutput()
+		except:
+			connected=0
+			self.dlgImport.status.setText("No device detected. Check connection.")
+			app.processEvents()
+		else:
+			self.dlgImport.status.setText("Ready. Press <<Dump>> on device.")
+			connected=1
+			
+		app.processEvents()
 		if connected:
 			started = 0
 			ii=int(self.dlgImport.firstGrid.value())-1
@@ -340,6 +347,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 				if (bytesToRead!=""):
 					print("started")
 					self.dlgImport.status.setText("Loading...")
+					app.processEvents()
 					started=1
 					ii+=1
 					if (ii<10):
@@ -397,6 +405,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 									elif(pt==2):
 										matrix50[y][2*x+1]=value
 							self.dlgImport.progressBar.setValue((100/cols)*(x+1))
+							app.processEvents()
 
 				#### Writing file. Checking whether the file already exists ####
 					
@@ -413,6 +422,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 							break
 						else:
 							np.savetxt(fname50, matrix50, delimiter=",", fmt='%.2f')
+					app.processEvents()
 
 				if (started==1 and bytesToRead==""):
 					ser.flushInput()
@@ -425,8 +435,6 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 					self.dlgImport.buttonBox.rejected.connect(self.dlgImportData.close)
 					break
 
-		else:
-			print 'should we wait?'
 			
 			
 	def saveParam(self):
@@ -446,6 +454,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 		for line in confFile:
 			if "siteDir" in line:
 				foldername=line.split('=')[1]
+				self.foldername=foldername
 				self.pathRaw=foldername +"\\raw\\"
 				self.pathOutput=foldername +"\\output\\"
 				self.pathTiles=foldername +"\\tiles\\"
@@ -455,6 +464,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 					self.actionImport_main.setEnabled(False)
 					self.actionAssemble_main.setEnabled(False)
 					self.dir_main.setText("")
+					self.foldername=""
 				else:
 					self.dir_main.setText(foldername)
 					self.infoTxt_main.setText("New directory set:\nRaws:\n"+self.pathRaw + "\n Output:\n" + self.pathOutput + "\nTiles:\n" + self.pathTiles)
@@ -464,6 +474,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 					self.siteName_main.setText(self.siteName)
 				
 	def process(self):
+		self.clearInfo()
 		self.mainMatrix=self.makeMosaic()
 		self.exportGeoTiff_main.setEnabled(True)
 		
@@ -851,12 +862,14 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 
 	def makeMosaic(self):
 		from PIL import Image
+		self.addInfo("Load parameters\n")
 		self.siteName=self.siteName_main.text()
 		gridSize=(20,20)
 		index=self.getGeometry()
 		zero=np.zeros(gridSize)
 		x=index.shape[0]
 		y=index.shape[1]
+		self.addInfo("Assembling tiles\n")
 		for i in range (0,x):
 			for ii in range (0,y):
 				
@@ -883,18 +896,23 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 				mos=np.concatenate((mos,line),axis=0)
 				
 		if (self.despike_main.isChecked()):
+			self.addInfo("Despiking...")
 			mos=self.despike(mos)
+			self.addInfo("Done\n")
 		if (self.edgeMatching_main.isChecked()):
+			self.addInfo("Edge matching...")
 			mos=self.edgeMatch2(mos,20)
+			self.addInfo("Done\n")
 		#mos=localVariation(mos)
 		step=1
 		xtif=y*gridSize[0]
 		ytif=x*gridSize[1]
-		
+		self.addInfo("Creating preview...")
 		#mos,cdf = histeq(mos)
 		print('%s x %s' %(x,y))
 		hs_array = self.hillshade(mos,45, 315, 0.0025)
 		self.makePreview(mos, hs_array, str(self.siteName))
+		self.addInfo("Finished\n")
 		return mos
 		
 	def makePreview(self,array, hillshade_mat, filename):
