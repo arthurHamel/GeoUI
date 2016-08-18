@@ -4,6 +4,14 @@ from PyQt4 import QtCore, QtGui, uic
 from PyQt4.QtGui import QFileDialog, QMessageBox, QLabel
 import os
 import numpy as np
+from matplotlib.figure import Figure
+import matplotlib.cm as cm
+import matplotlib
+import matplotlib.mlab as mlab
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
+import matplotlib.patches as patches
 
 DIAG_Import, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'importlogger.ui'))
 
@@ -57,6 +65,32 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 		self.exportGeoTiff_main.setEnabled(False)
 		self.loadParam()
 		
+		self.figure = plt.figure()
+		self.canvas = FigureCanvas(self.figure)
+		self.toolbar = NavigationToolbar(self.canvas, self)
+		self.canvasLayout.addWidget(self.toolbar)
+		self.canvasLayout.addWidget(self.canvas)
+		self.sizeTiles_lbl.setText("x:%s y:%s" %(self.tileSize[0], self.tileSize[0]))
+
+		self.stdClip_val.setText(str(self.stdClip_slider.value()/float(100)))
+		self.stdClip_slider.valueChanged.connect(self.changeClipValue)
+		
+		self.stdClip_check.toggled.connect(self.clipChecked)
+		
+		self.statusBar().showMessage('Ready')
+		
+	def clipChecked(self):
+		if self.stdClip_check.isChecked():
+			self.stdClip_slider.setEnabled(True)
+			self.stdClip_val.setEnabled(True)
+			#Update view
+		else:
+			self.stdClip_slider.setEnabled(False)
+			self.stdClip_val.setEnabled(False)
+		
+	def changeClipValue(self):
+		self.stdClip_val.setText(str(self.stdClip_slider.value()/float(100)))
+		
 	def addInfo(self,l):
 		self.infotxt+=l
 		self.infoTxt_main.setText(self.infotxt)
@@ -74,14 +108,11 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 		#Here check that the directory is valid
 		self.pathRaw=foldername +"\\raw\\"
 		self.pathOutput=foldername +"\\output\\"
-		self.pathTiles=foldername +"\\tiles\\"
-		self.infotxt=""
+		infotxt=""
 		if (os.path.isdir(self.pathRaw)==0):
 			infotxt+="Raw folder not found\n"
 		if (os.path.isdir(self.pathOutput)==0):
 			infotxt+="Output folder not found\n"		
-		if (os.path.isdir(self.pathTiles)==0):
-			infotxt+="Tiles folder not found\n"
 
 		if (infotxt!=""):
 			QMessageBox.about(self, "Invalid directory", infotxt)
@@ -90,7 +121,6 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 			self.dir_main.setText("")
 		else:
 			self.dir_main.setText(foldername)
-			self.infoTxt_main.setText("New directory set:\nRaws:\n"+self.pathRaw + "\n Output:\n" + self.pathOutput + "\nTiles:\n" + self.pathTiles)
 			self.actionImport_main.setEnabled(True)
 			self.actionAssemble_main.setEnabled(True)
 			self.siteName=foldername.split("\\")[-1]
@@ -164,111 +194,87 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 		report=("Statistics\nmin=%.3f\nmax=%.3f\nStd=%.3f\nMean=%.3f" %(self.min,self.max,self.std,self.mean))
 		
 		self.infoTxt_main.setText(report)
-	
-	def drawPreviewTile(self, i, ii):
-		from PIL import Image
-		csv=np.genfromtxt(str(self.pathRaw+self.siteName+'_'+self.index[i][ii]+'.csv'), delimiter=",")			
-		# except:
-			# print ('Warning: Grid '+self.index[i][ii]+'  not found.')
-		# else:
-		im=self.normalizeClip(csv)*255
-		image = Image.fromarray(np.uint8(im)).convert('RGBA')
-		
-		mask=np.zeros(csv.shape)
-		
-		mask[np.nonzero(csv)]=255
-		mask = Image.fromarray(np.uint8(mask)).convert('L')
-		image.putalpha(mask)
-		
-		image.save(str(self.pathTiles+self.siteName+'_'+self.index[i][ii]+'tile.png'))
-
-		print "make grid %s, %s" %(i,ii)
-		previewTile = QtGui.QPixmap(str(self.pathTiles+self.siteName+'_'+self.index[i][ii]+'tile.png'))
-		scaledPreview = previewTile.scaled(self.tileSize,self.tileSize, QtCore.Qt.KeepAspectRatio)
-		
-		tileLbl=QLabel()
-		tileLbl.setPixmap(scaledPreview)
-
-		exec("self.tile%s_%s = tileLbl" %(i,ii))
-		exec("self.dlgAss.grid.addWidget(self.tile%s_%s, %s, %s) " %(i,ii, i , ii))
 		
 	def drawSelection(self):
-		self.selSquare=QLabel()
-		self.selSquare.setStyleSheet('border : 1px solid red; padding: -1px; text-align: center')
 		
 		x,y=self.currentSelection
-		self.selSquare.setText(self.index[y][x])
-		self.selSquare.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)
-		self.dlgAss.grid.addWidget(self.selSquare, y, x)
+		if (x!=-1):
+			self.select=self.ax.add_patch(
+				patches.Rectangle(
+					(x*self.tileSize[0], y*self.tileSize[1]),   # (x,y)
+					self.tileSize[0],          # width
+					self.tileSize[1],          # height
+					fill=False,
+					edgecolor="red",
+					linewidth=1
+				)
+			)
+			self.canvas.draw()
 	
 	def clearSelection(self):
 		x,y=self.currentSelection
 		if (x!=-1):
-			self.dlgAss.grid.removeWidget(self.selSquare)
-			self.selSquare.deleteLater()
-			self.selSquare = None
+			self.select.remove()
+			self.canvas.draw()
 	
-	def getPos(self , event):
-		if ((event.pos().x()<self.dlgAss.frame.frameGeometry().width()-self.Xmargin and event.pos().x()>self.Xmargin) and
-			(event.pos().y()<self.dlgAss.frame.frameGeometry().height()-self.Ymargin and event.pos().x()>self.Ymargin)):
-			xold,yold=self.currentSelection
-			x = int((event.pos().x()-self.Xmargin)/self.tileSize)
-			y = int((event.pos().y()-self.Ymargin)/self.tileSize)
-			if (xold!=x or yold!=y):
+	def onclickFig(self,event):
+		print('button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
+			  (event.button, event.x, event.y, event.xdata, event.ydata))
+		selection=True
+		if event.button==1:
+			if selection:
+				x=int(event.xdata/self.tileSize[0])
+				y=int(event.ydata/self.tileSize[1])
+				print("right Click at %s %s" %(x,y))
 				self.clearSelection()
-				
-				if (self.index[y][x]!="0"):
-					
-					self.currentSelection=(x,y)
-					self.drawSelection()
-					print self.currentSelection
-				else:
-					self.currentSelection=(-1,-1)
-		else:
-			self.clearSelection()
-			self.currentSelection=(-1,-1)
+				self.currentSelection=(x,y)
+				self.drawSelection()
 			
+		if event.button==3:
+			self.currentSelection=(-1,-1)
+
+	
 		
-	def gridFromGeometry(self):
-		from PIL import Image
-		self.dlgAss.grid.setSpacing(0)
-		self.index=self.getGeometry()
-		x=self.index.shape[0]
-		y=self.index.shape[1]
-		gridSize=(20,20)
-		zero=np.zeros(gridSize)
-		self.tileSize=int(np.minimum((self.dlgAss.frame.width())/x, ((self.dlgAss.frame.height())/y)))
+	# def gridFromGeometry(self):
+		# from PIL import Image
+		# self.dlgAss.grid.setSpacing(0)
+		# self.index=self.getGeometry()
+		# x=self.index.shape[0]
+		# y=self.index.shape[1]
+		# gridSize=(20,20)
+		# zero=np.zeros(gridSize)
+		# self.tileSize=int(np.minimum((self.dlgAss.frame.width())/x, ((self.dlgAss.frame.height())/y)))
 		
-		self.Xmargin=0
-		self.Ymargin=0			
-		if (x>y):
-			self.Xmargin=(x-y)*self.tileSize/2		
-		elif (y>x):
-			self.Ymargin=(y-x)*self.tileSize/2
-		for i in range (0,x):
-			for ii in range (0,y):
-				if (self.index[i][ii]!="0"):
-					self.drawPreviewTile(i, ii)
+		# self.Xmargin=0
+		# self.Ymargin=0			
+		# if (x>y):
+			# self.Xmargin=(x-y)*self.tileSize/2		
+		# elif (y>x):
+			# self.Ymargin=(y-x)*self.tileSize/2
+		# for i in range (0,x):
+			# for ii in range (0,y):
+				# if (self.index[i][ii]!="0"):
+					# self.drawPreviewTile(i, ii)
 					
-				else:
-					image = Image.fromarray(np.uint8(zero))
-					zeroGrid=str(self.pathTiles+self.siteName+'_zeros-tile.png')
-					if not (os.path.isfile(zeroGrid)):
-						mask=np.zeros(gridSize)
-						#mask+=255					
-						mask = Image.fromarray(np.uint8(mask)).convert('L')
-						image.putalpha(mask)
+				# else:
+					# image = Image.fromarray(np.uint8(zero))
+					# zeroGrid=str(self.pathTiles+self.siteName+'_zeros-tile.png')
+					# if not (os.path.isfile(zeroGrid)):
+						# mask=np.zeros(gridSize)
+						# #mask+=255					
+						# mask = Image.fromarray(np.uint8(mask)).convert('L')
+						# image.putalpha(mask)
 						
-						image.save(zeroGrid)
-					previewTile = QtGui.QPixmap(zeroGrid)
-					scaledPreview = previewTile.scaled(self.tileSize,self.tileSize, QtCore.Qt.KeepAspectRatio)
-					tileLbl=QLabel()
-					tileLbl.setPixmap(scaledPreview)
-					self.tilezeros = tileLbl
-					exec("self.dlgAss.grid.addWidget(self.tilezeros, %s, %s) " %(i,ii))			
+						# image.save(zeroGrid)
+					# previewTile = QtGui.QPixmap(zeroGrid)
+					# scaledPreview = previewTile.scaled(self.tileSize,self.tileSize, QtCore.Qt.KeepAspectRatio)
+					# tileLbl=QLabel()
+					# tileLbl.setPixmap(scaledPreview)
+					# self.tilezeros = tileLbl
+					# exec("self.dlgAss.grid.addWidget(self.tilezeros, %s, %s) " %(i,ii))			
 		
-		self.dlgAss.grid.setContentsMargins(self.Xmargin,self.Ymargin,self.Xmargin,self.Ymargin)
-		self.dlgAss.frame.mouseReleaseEvent=self.getPos
+		# self.dlgAss.grid.setContentsMargins(self.Xmargin,self.Ymargin,self.Xmargin,self.Ymargin)
+		# self.dlgAss.frame.mouseReleaseEvent=self.getPos
 
 	def rotate90(self):
 		ii,i=self.currentSelection
@@ -306,7 +312,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 		exec("self.tile%s_%s = None" %(i,ii))
 		self.drawPreviewTile(i, ii)
 		
-	def saveAssemble(self):
+	#def saveAssemble(self):
 		files=os.listdir(self.pathTiles)
 		for file in files:
 			if ".png" in file:
@@ -443,35 +449,50 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 		except:
 			print "Error opening the config file. Check you have the rights to write in the directory."
 		
-		conftxt="siteDir="+ self.foldername
+		conftxt="SITEDIR="+ self.foldername + "\n"
+		conftxt+="SITENAME="+ self.siteName + "\n"
+		conftxt+="TILESIZEX= %s\n" %self.tileSize[0]
+		conftxt+="TILESIZEY= %s\n" %self.tileSize[1]
+		
 		confFile.write(conftxt)
 		
 	def loadParam(self):
 		confFile=open(os.path.join(os.path.dirname(__file__), 'conf.txt'),'r')
 
 		# print "Error loading the config file. Default values will be used."
-		
+		##Set some default values
+		X=20
+		Y=20
+		self.foldername=""
 		for line in confFile:
-			if "siteDir" in line:
-				foldername=line.split('=')[1]
+			if "SITEDIR" in line:
+				foldername=line.split('=')[1].strip()
 				self.foldername=foldername
 				self.pathRaw=foldername +"\\raw\\"
 				self.pathOutput=foldername +"\\output\\"
-				self.pathTiles=foldername +"\\tiles\\"
-				if (os.path.isdir(self.pathRaw)==0 or 
-					os.path.isdir(self.pathOutput)==0 or
-					os.path.isdir(self.pathTiles)==0):
+				
+				if (os.path.isdir(self.pathRaw)==0 or os.path.isdir(self.pathOutput)==0):
 					self.actionImport_main.setEnabled(False)
 					self.actionAssemble_main.setEnabled(False)
 					self.dir_main.setText("")
+					print("no dir found")
 					self.foldername=""
 				else:
 					self.dir_main.setText(foldername)
-					self.infoTxt_main.setText("New directory set:\nRaws:\n"+self.pathRaw + "\n Output:\n" + self.pathOutput + "\nTiles:\n" + self.pathTiles)
 					self.actionImport_main.setEnabled(True)
 					self.actionAssemble_main.setEnabled(True)
-					self.siteName=foldername.split("\\")[-1]
-					self.siteName_main.setText(self.siteName)
+					self.dir_main.setText(self.foldername)
+					
+			if "TILESIZEX" in line:
+				X=int(line.split('=')[1])
+			if "TILESIZEY" in line:
+				Y=int(line.split('=')[1])
+			if "SITENAME" in line:
+				self.siteName=line.split('=')[1].strip()
+				self.siteName_main.setText(self.siteName)
+			
+		self.tileSize=(X,Y)
+		
 				
 	def process(self):
 		self.clearInfo()
@@ -551,10 +572,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 		return gauss_highpass
 	
 	def despike(self, array):
-		import matplotlib.cm as cm
-		import matplotlib
-		import matplotlib.mlab as mlab
-		import matplotlib.pyplot as plt
+
 		from PIL import Image
 		print 'despiking...'
 		cols=array.shape[0]
@@ -564,6 +582,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 		mask=np.zeros(array.shape)
 		count=0
 		countFail=0
+		treshold=2.5
 		for x in range (1, cols-2):
 			for y in range (1, rows-2):
 				value=array[x][y]
@@ -577,7 +596,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 		
 					reliableNeighbours=neighbours[b]
 					
-					if (value>mean+2.5*std or value<mean-2.5*std or value<2):
+					if (value>mean+treshold*std or value<mean-treshold*std or value<2):
 						if (len(reliableNeighbours)>3):
 							despikeArray[x][y]=np.mean(reliableNeighbours)
 							count+=1
@@ -588,17 +607,48 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 						despikeArray[x][y]=value
 				else:
 						despikeArray[x][y]=value
+		self.addInfo("%s values despiked.\n" %count)
 		print("%s values despiked." %count)
 		print("%s values could not be despiked." %countFail)
 		mask[np.where(despikeLog==0)]=255
 		mask = Image.fromarray(mask).convert('L')
 		
-		imageLog=Image.fromarray(np.uint8(cm.jet_r(self.normalize(despikeLog)*255))).convert('RGBA')
-		#imageLog.putalpha(mask)
-		#imageLog.save(self.pathOutput+'DespikeLog.png')
 		
 		return despikeArray
 	
+	def matrix2figure(self, matrix):
+	
+		self.figure.clear()
+		if self.stdClip_check.isChecked():
+			matrix=self.stdClip(matrix, self.stdClip_slider.value()/float(100))
+
+		self.ax = self.figure.add_subplot(111)
+		# discards the old graph
+		self.ax.hold(False)
+		
+		noData=0
+		masked_data = np.ma.masked_where(matrix == noData, matrix)
+		array = plt.imshow(masked_data)
+		cbar = plt.colorbar(mappable=array, orientation = 'horizontal')
+		cbar.set_label('Resisitivity (Ohm/m)')
+		plt.title(self.siteName)
+		self.ax.grid(True)
+		index=self.getGeometry()
+		y=(index.shape[0])
+		x=(index.shape[1])
+		xmax=x*self.tileSize[0]
+		ymax=y*self.tileSize[1]
+		print(xmax,ymax)
+		self.ax.xaxis.set_ticks(np.arange(0, xmax, 20))
+		self.ax.yaxis.set_ticks(np.arange(0, ymax, 20))
+
+
+		app.processEvents()
+
+		self.canvas.draw()
+		cid = self.canvas.mpl_connect('button_press_event', self.onclickFig)
+		self.currentSelection=(-1,-1)
+		
 	def exportGeoTiff(self, filename, mat):
 		import os.path
 		import gdal, osr
@@ -669,8 +719,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 		mat=((mat-min)/(max-min))
 		return mat
 		
-	def normalizeClip(self,mat):
-		clip=2
+	def normalizeClip(self,mat,clip):
 		dev=mat.std()
 		mean=mat.mean()
 		min=mean-clip*dev
@@ -679,6 +728,22 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 		mat=((mat-min)/(max-min))
 		return mat
 	
+	def stdClip(self,mat,clip):
+		dev=mat.std()
+		mean=mat.mean()
+		min=mean-clip*dev
+		max=mean+clip*dev
+		
+		for i in range (0, mat.shape[0]):
+			for ii in range (0,mat.shape [1]):
+				if mat[i][ii]>max:	
+					mat[i][ii]=max
+				if mat[i][ii]<min:
+					mat[i][ii]=min
+				
+		return mat
+		
+		
 	def getGeometry(self):
 		index=np.genfromtxt(str(self.pathOutput)+'geometry.txt',dtype='string', delimiter="\t");
 		return index;
@@ -913,6 +978,7 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 		hs_array = self.hillshade(mos,45, 315, 0.0025)
 		self.makePreview(mos, hs_array, str(self.siteName))
 		self.addInfo("Finished\n")
+		self.matrix2figure(mos)
 		return mos
 		
 	def makePreview(self,array, hillshade_mat, filename):
@@ -961,22 +1027,20 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
 			mask = Image.fromarray(np.uint8(mask)).convert('L')
 			new_img.putalpha(mask)
 			new_img.save(str(self.pathOutput+filename)+'preview.png')
-			self.displayPreview()
+			# self.displayPreview()
 		else:
 			print('error in reading image')
-		
-	def displayPreview(self):
-		previewImage = QtGui.QPixmap(self.pathOutput+self.siteName+'preview.png')
-		scaledPreview = previewImage.scaled(self.preview_main.size(), QtCore.Qt.KeepAspectRatio)
-		self.preview_main.setPixmap(scaledPreview)
+
 	
 	def exportGeo(self):
 		print('Export image...')
+		self.statusBar().showMessage('Export image...')
 		self.exportGeoTiff(self.siteName, self.mainMatrix*100)
 		print('Export hillshade...')
+		self.statusBar().showMessage('Export hillshade...')
 		hs_array = self.hillshade(self.mainMatrix*100,45, 315, 0.0025)
 		self.exportGeoTiff(self.siteName+"_hs", hs_array)
-		
+		self.statusBar().showMessage('GeoTIFF exported')
 		# self.georeferencing()
 		
 if __name__ == "__main__":

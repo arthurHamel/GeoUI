@@ -67,7 +67,7 @@
       <item>
        <widget class="QLabel" name="label_7">
         <property name="text">
-         <string>Ypoints</string>
+         <string>Y points</string>
         </property>
        </widget>
       </item>
@@ -85,12 +85,27 @@
       <item>
        <widget class="QLabel" name="label_6">
         <property name="text">
-         <string>Export site:</string>
+         <string>Export to site:</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QLabel" name="exportDir">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>110</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -229,14 +244,14 @@
   <widget class="QLabel" name="status">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>50</x>
      <y>290</y>
-     <width>331</width>
-     <height>16</height>
+     <width>301</width>
+     <height>20</height>
     </rect>
    </property>
    <property name="text">
-    <string>Status</string>
+    <string/>
    </property>
   </widget>
   <widget class="QPushButton" name="go">

@@ -1,1 +1,4 @@
-siteDir=C:\sync\LERC\Isernia\GeoRes_2015\a236
+SITEDIR=C:\sync\LERC\Isernia\GeoRes_2015\a119
+SITENAME=a119
+TILESIZEX= 20
+TILESIZEY= 20
