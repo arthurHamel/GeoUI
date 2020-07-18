@@ -14,233 +14,363 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="verticalLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>781</width>
-      <height>567</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Site path:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="dir_main">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="dirSelect_main">
-         <property name="text">
-          <string>...</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QLabel" name="site">
-         <property name="text">
-          <string>Site: </string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="siteName_main"/>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QLabel" name="sizeTiles_lbl">
-         <property name="text">
-          <string>Size Tiles</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QFrame" name="frame">
-         <property name="minimumSize">
-          <size>
-           <width>500</width>
-           <height>500</height>
-          </size>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <widget class="QWidget" name="verticalLayoutWidget_4">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>-1</y>
-            <width>511</width>
-            <height>501</height>
-           </rect>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+     <horstretch>2</horstretch>
+     <verstretch>2</verstretch>
+    </sizepolicy>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_3">
+    <item row="0" column="0">
+     <layout class="QGridLayout" name="gridLayout">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetNoConstraint</enum>
+      </property>
+      <property name="verticalSpacing">
+       <number>0</number>
+      </property>
+      <item row="0" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="sizeConstraint">
+         <enum>QLayout::SetMaximumSize</enum>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-          <layout class="QVBoxLayout" name="canvasLayout"/>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Site path:</string>
+          </property>
          </widget>
-        </widget>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
-         <property name="sizeConstraint">
-          <enum>QLayout::SetMinimumSize</enum>
-         </property>
-         <property name="leftMargin">
-          <number>10</number>
-         </property>
-         <item>
-          <widget class="QGroupBox" name="groupBox">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Maximum">
-             <horstretch>200</horstretch>
-             <verstretch>30</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>200</width>
-             <height>100</height>
-            </size>
-           </property>
-           <property name="title">
-            <string>Processing Steps</string>
-           </property>
-           <widget class="QWidget" name="verticalLayoutWidget_2">
-            <property name="geometry">
-             <rect>
-              <x>0</x>
-              <y>20</y>
-              <width>191</width>
-              <height>71</height>
-             </rect>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_3">
-             <item>
-              <widget class="QCheckBox" name="despike_main">
-               <property name="text">
-                <string>Despike</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="edgeMatching_main">
-               <property name="text">
-                <string>Edge matching</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="checkBox_3">
-               <property name="text">
-                <string>Draw Grids</string>
-               </property>
-              </widget>
-             </item>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="dir_main">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>20</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="dirSelect_main">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="site">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Site: </string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="siteName_main"/>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="sizeTiles_lbl">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Size Tiles</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="epsg_txt">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>TextLabel</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QFrame" name="frame">
+          <property name="minimumSize">
+           <size>
+            <width>500</width>
+            <height>500</height>
+           </size>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="0" column="0">
+            <layout class="QVBoxLayout" name="canvasLayout">
+             <property name="sizeConstraint">
+              <enum>QLayout::SetNoConstraint</enum>
+             </property>
             </layout>
-           </widget>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="process_main">
-           <property name="text">
-            <string>Do the thing</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="exportGeoTiff_main">
-           <property name="text">
-            <string>Export GeoTiff</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButton_2">
-           <property name="text">
-            <string>Export Figure</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="Line" name="line">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="groupBox_2">
-           <property name="minimumSize">
-            <size>
-             <width>200</width>
-             <height>100</height>
-            </size>
-           </property>
-           <property name="title">
-            <string>Info</string>
-           </property>
-           <widget class="QLabel" name="infoTxt_main">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>20</y>
-              <width>180</width>
-              <height>131</height>
-             </rect>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetMinimumSize</enum>
+          </property>
+          <property name="leftMargin">
+           <number>10</number>
+          </property>
+          <item>
+           <widget class="QGroupBox" name="groupBox">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Maximum">
+              <horstretch>200</horstretch>
+              <verstretch>30</verstretch>
+             </sizepolicy>
             </property>
             <property name="minimumSize">
              <size>
-              <width>180</width>
+              <width>200</width>
+              <height>100</height>
+             </size>
+            </property>
+            <property name="title">
+             <string>Processing Steps</string>
+            </property>
+            <widget class="QWidget" name="verticalLayoutWidget_2">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>20</y>
+               <width>191</width>
+               <height>71</height>
+              </rect>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_3">
+              <item>
+               <widget class="QCheckBox" name="despike_main">
+                <property name="text">
+                 <string>Despike</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="edgeMatching_main">
+                <property name="text">
+                 <string>Edge matching</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="deslope_main">
+                <property name="text">
+                 <string>Deslope</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="process_main">
+            <property name="text">
+             <string>Go</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="exportGeoTiff_main">
+            <property name="text">
+             <string>Export GeoTiff</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_2">
+            <property name="text">
+             <string>Export Figure</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="Line" name="line">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox_2">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>100</height>
+             </size>
+            </property>
+            <property name="title">
+             <string>Info</string>
+            </property>
+            <widget class="QLabel" name="infoTxt_main">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>20</y>
+               <width>180</width>
+               <height>131</height>
+              </rect>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>180</width>
+               <height>100</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>100</width>
+               <height>200</height>
+              </size>
+             </property>
+             <property name="autoFillBackground">
+              <bool>true</bool>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+             </property>
+            </widget>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox_3">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
               <height>100</height>
              </size>
             </property>
@@ -250,125 +380,116 @@
               <height>200</height>
              </size>
             </property>
-            <property name="autoFillBackground">
-             <bool>true</bool>
+            <property name="title">
+             <string>Visuals</string>
             </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-            </property>
-           </widget>
-          </widget>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="groupBox_3">
-           <property name="minimumSize">
-            <size>
-             <width>200</width>
-             <height>100</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>100</width>
-             <height>200</height>
-            </size>
-           </property>
-           <property name="title">
-            <string>Visuals</string>
-           </property>
-           <widget class="QWidget" name="verticalLayoutWidget_3">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>19</y>
-              <width>182</width>
-              <height>163</height>
-             </rect>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_4">
-             <item>
-              <widget class="QCheckBox" name="vis_hs">
-               <property name="minimumSize">
-                <size>
-                 <width>180</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>Hillshade</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="radioButton_2">
-               <property name="text">
-                <string>Min-Max</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="stdClip_check">
-               <property name="text">
-                <string>Standart Deviation</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_3">
-               <item>
-                <widget class="QLabel" name="stdClip_val">
+            <widget class="QWidget" name="verticalLayoutWidget_3">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>19</y>
+               <width>182</width>
+               <height>163</height>
+              </rect>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_4">
+              <item>
+               <widget class="QCheckBox" name="vis_hs">
+                <property name="minimumSize">
+                 <size>
+                  <width>180</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>Hillshade</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="radioButton_2">
+                <property name="text">
+                 <string>Min-Max</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="stdClip_check">
+                <property name="text">
+                 <string>Standart Deviation</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_3">
+                <item>
+                 <widget class="QLabel" name="stdClip_val">
+                  <property name="text">
+                   <string>val</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSlider" name="stdClip_slider">
+                  <property name="maximum">
+                   <number>600</number>
+                  </property>
+                  <property name="singleStep">
+                   <number>1</number>
+                  </property>
+                  <property name="pageStep">
+                   <number>10</number>
+                  </property>
+                  <property name="value">
+                   <number>200</number>
+                  </property>
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_2">
+                <property name="text">
+                 <string>Palette</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="vis_palette">
+                <item>
                  <property name="text">
-                  <string>val</string>
+                  <string>gray</string>
                  </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QSlider" name="stdClip_slider">
-                 <property name="maximum">
-                  <number>600</number>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Greys</string>
                  </property>
-                 <property name="singleStep">
-                  <number>1</number>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>hot</string>
                  </property>
-                 <property name="pageStep">
-                  <number>10</number>
-                 </property>
-                 <property name="value">
-                  <number>200</number>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_2">
-               <property name="text">
-                <string>Palette</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QComboBox" name="vis_palette"/>
-             </item>
-            </layout>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </widget>
            </widget>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -392,6 +513,7 @@
      <string>Edit</string>
     </property>
     <addaction name="getStats_main"/>
+    <addaction name="actionSettings"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -421,6 +543,11 @@
   <action name="getStats_main">
    <property name="text">
     <string>Statistics</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Settings</string>
    </property>
   </action>
  </widget>

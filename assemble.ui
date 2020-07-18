@@ -29,87 +29,24 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QPushButton" name="rotate">
+  <widget class="QPlainTextEdit" name="text">
    <property name="geometry">
     <rect>
-     <x>670</x>
-     <y>510</y>
-     <width>75</width>
-     <height>23</height>
+     <x>20</x>
+     <y>20</y>
+     <width>741</width>
+     <height>541</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Rotate</string>
+   <property name="verticalScrollBarPolicy">
+    <enum>Qt::ScrollBarAlwaysOn</enum>
    </property>
-  </widget>
-  <widget class="QPushButton" name="flipud">
-   <property name="geometry">
-    <rect>
-     <x>640</x>
-     <y>350</y>
-     <width>75</width>
-     <height>23</height>
-    </rect>
+   <property name="horizontalScrollBarPolicy">
+    <enum>Qt::ScrollBarAlwaysOn</enum>
    </property>
-   <property name="text">
-    <string>Flip UD</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="fliplr">
-   <property name="geometry">
-    <rect>
-     <x>650</x>
-     <y>450</y>
-     <width>75</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Flip LR</string>
-   </property>
-  </widget>
-  <widget class="QFrame" name="frame">
-   <property name="geometry">
-    <rect>
-     <x>50</x>
-     <y>40</y>
-     <width>510</width>
-     <height>510</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="autoFillBackground">
+   <property name="centerOnScroll">
     <bool>true</bool>
    </property>
-   <property name="frameShape">
-    <enum>QFrame::StyledPanel</enum>
-   </property>
-   <property name="frameShadow">
-    <enum>QFrame::Plain</enum>
-   </property>
-   <widget class="QWidget" name="gridLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>511</width>
-      <height>511</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" name="grid">
-     <property name="sizeConstraint">
-      <enum>QLayout::SetFixedSize</enum>
-     </property>
-     <property name="spacing">
-      <number>0</number>
-     </property>
-    </layout>
-   </widget>
   </widget>
  </widget>
  <resources/>

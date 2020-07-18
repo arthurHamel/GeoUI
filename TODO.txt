@@ -1,0 +1,10 @@
+ToDo:
+
+-Improve despike logg: first index and then correct
+-Treshold of desking adusj
+
+
+-Create world file
+
+-histogramm
+-despikeLog
