@@ -15,18 +15,23 @@ There are dependencies to install separatelly:
 - Numpy
 - Matplotlib
 - Serial
+- Pyserial
+- Openvc
 
 It can be done by executing the command:
-pip install numpy matplotlib serial
+`pip install numpy matplotlib serial pyserial opencv-python pyqt5`
 
 For GDAL, you may have to follow this tutorial. If you have QGIS you will have a possibly a different version.
-
+download your version from:
+http://www.lfd.uci.edu/~gohlke/pythonlibs/#gdal
+Then:
+`pip install /dir/and/file.whl`
 
 They are common packages, check on Google how to have them installed on your machine.
 
 ## Usage
 To run the script open the cmd terminal in windows and type <br/>
-"cd /the/path/to/the/file"
+`"cd /the/path/to/the/file"`<br/>
 `"python GeoUI.py"`<br/>
 The windows will open, but you will stil have the terminal to find out about errors (nothing is perfect).
 
@@ -43,7 +48,7 @@ To start with a new survey, you need to create a repertory with the following st
 In the space top left, select the directory of the site you work on wich contains the above mentionned folders. If it doesn't you will get an error message.
 
 ### Download data
-To download data go to `File` > `Import from RM85`
+To download data click on `Import from RM85`
   - select the number of the first grid you will download (it should be automatically the right one).
   - select the size of your grid (20 by 20)
   - select the port of the device
@@ -54,7 +59,7 @@ To download data go to `File` > `Import from RM85`
 
 The grid assemblage is done automatically following the file "geometry.txt" in te repertory "output/".
 
-The file can be edited from `File` > `Assemble grid`. It is a simple tab separated table which has to be of complete lines and collums. 
+The file can be edited from `Assemble grid`. It is a simple tab separated table which has to be of complete lines and collums. 
 Empty grids are marked with "0".
 
 Example:
@@ -76,10 +81,10 @@ Incorrect (All the lines must be the same length!):
 
 ###  Process
 
-Once loaded each grid can be rotated or mirrored from the interface: Press `Go` and use the buttons on the top left corner of the visualization window.
+Once loaded each grid can be rotated or mirrored from the interface: Press `Refresh` and use the buttons on the top left corner of the visualization window.
 
 
-## Desctiption of lagorythms
+## Desctiption of algorythms
 
 ### Despike
 Despike option is supposed to remove the noise in the data (misreadings as they occur alwys in teh field). Try with and without and see what's best. Some values are not depiked, then you need to correct them manually: right click on the grid -> `Open grid in editor`.
@@ -93,5 +98,5 @@ Thicking this option will remove teh tile effect due to different moiture condit
 These function are quite limited as you are expected to visualize the data in a GIS environement later. You can however previsualise the data with two contrast adjustement options: min-max and standart deviation.
 
 ### Export
-You can export your data as a GeoTiff file already with a coordinate system (but not georeferenced). You can select the coordinate system in `Edit` > `Settings`.
+You can export your data as a GeoTiff file already with a coordinate system (but not georeferenced). You can select the coordinate system from `EPSG`.
 
