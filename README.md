@@ -31,8 +31,8 @@ They are common packages, check on Google how to have them installed on your mac
 
 ## Usage
 To run the script open the cmd terminal in windows and type <br/>
-`"cd /the/path/to/the/file"`<br/>
-`"python GeoUI.py"`<br/>
+`cd /the/path/to/the/file`<br/>
+`python GeoUI.py`<br/>
 The windows will open, but you will stil have the terminal to find out about errors (nothing is perfect).
 
 
